@@ -161,31 +161,6 @@ program
             )
           );
         }
-        /*         data.results.forEach((element) => {
-
-          console.log(chalk.white('\n'));
-
-
-
-          console.log(chalk.white(`Apepearing in movies: \n`));
-          if (element.known_for !== 'undefined') {
-            element.known_for.forEach((movies) => {
-              console.log(chalk.white(`\t Movie:`));
-              console.log(chalk.white(`\t ID: ${movies.id}`));
-              console.log(
-                chalk.white(`\t Release date: ${movies.release_date}`)
-              );
-              console.log(chalk.white(`\t Title: ${movies.title}`));
-              console.log(chalk.white(`\n`));
-            });
-          } else {
-            console.log(
-              chalk.yellow(
-                `${element.name} + doesn't appear in any movie + \n`
-              )
-            );
-          }
-        }); */
         console.log('No more data in response.');
         spinner.succeed('Todo bien');
       });
@@ -213,6 +188,5 @@ program
     console.log('hello-world');
   });
 
-// error on unknown commands
 
 program.parse(process.argv);
