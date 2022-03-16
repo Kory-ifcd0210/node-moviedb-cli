@@ -53,7 +53,36 @@ program
         );
 
         data.results.forEach((element) => {
-          console.log(element.name);
+          console.log(
+            chalk.white('-----------------------------------------')
+          );
+          console.log(chalk.white('\n'));
+          console.log(chalk.white(`Person:\n`));
+          console.log(chalk.white(`ID: ${element.id}`));
+          console.log(
+            chalk.white(`Name:`) + chalk.bold.blue(`${element.name}`)
+          );
+          element.known_for_department == 'Acting'
+            ? console.log('Department: ' + chalk.magenta('Acting'))
+            : console.log('');
+          console.log(chalk.white(`Apepearing in movies: \n`));
+          if (element.known_for !== 'undefined') {
+            element.known_for.forEach((movies) => {
+              console.log(chalk.white(`\t Movie:`));
+              console.log(chalk.white(`\t ID: ${movies.id}`));
+              console.log(
+                chalk.white(`\t Release date: ${movies.release_date}`)
+              );
+              console.log(chalk.white(`\t Title: ${movies.title}`));
+              console.log(chalk.white(`\n`));
+            });
+          } else {
+            console.log(
+              chalk.yellow(
+                `${element.name} + doesn't appear in any movie + \n`
+              )
+            );
+          }
         });
         console.log('No more data in response.');
         spinner.succeed('Todo bien');
@@ -71,8 +100,101 @@ program
   .description(
     'Make a network request to fetch the data of a single person'
   )
-  .action(function handleAction() {
-    console.log('hello-world');
+  .action(async () => {
+    const answer = await prompt([
+      {
+        type: 'input',
+        message: 'The id of the person you want to consult',
+        name: 'id',
+      },
+    ]);
+
+    const options = {
+      hostname: 'api.themoviedb.org',
+      path: `/3/person/${answer.id}?api_key=17412c1653448ce298346a11dd12d464`,
+      method: 'GET',
+    };
+
+    const req = http.request(options, (res) => {
+      const spinner = ora('Fetching the person data...').start();
+      console.log(options);
+      let responseBody = '';
+      console.log(`STATUS: ${res.statusCode}`);
+      res.setEncoding('utf8');
+      res.on('data', (chunk) => {
+        responseBody = responseBody + chunk.toString();
+      });
+      res.on('end', () => {
+        const data = JSON.parse(responseBody);
+        console.log(data);
+        console.log(
+          chalk.white('\n -----------------------------------------')
+        );
+        console.log(chalk.white(`Person:\n`));
+        console.log(chalk.white(`ID: ${data.id}`));
+        console.log(
+          chalk.white(`Name:`) + chalk.bold.blue(`${data.name}`)
+        );
+        console.log(
+          chalk.white(`Birthday: ${data.birthday}`) +
+            chalk.grey(' | ') +
+            chalk.white(data.place_of_birth)
+        );
+        data.known_for_department == 'Acting'
+          ? console.log('Department: ' + chalk.magenta('Acting'))
+          : console.log('');
+        console.log(
+          chalk.white('Biography: ') +
+            chalk.bold.blue(`${data.biography}`)
+        );
+        if (data.also_known_as !== []) {
+          console.log(chalk.white('\n'));
+          console.log(chalk.white('Also known as: \n'));
+          data.also_known_as.forEach((element) => {
+            console.log(chalk.white(`${element}`));
+          });
+        } else {
+          console.log(chalk.white('\n'));
+          console.log(
+            chalk.yellow(
+              `${data.name} + doesn't have any alternate names + \n`
+            )
+          );
+        }
+        /*         data.results.forEach((element) => {
+
+          console.log(chalk.white('\n'));
+
+
+
+          console.log(chalk.white(`Apepearing in movies: \n`));
+          if (element.known_for !== 'undefined') {
+            element.known_for.forEach((movies) => {
+              console.log(chalk.white(`\t Movie:`));
+              console.log(chalk.white(`\t ID: ${movies.id}`));
+              console.log(
+                chalk.white(`\t Release date: ${movies.release_date}`)
+              );
+              console.log(chalk.white(`\t Title: ${movies.title}`));
+              console.log(chalk.white(`\n`));
+            });
+          } else {
+            console.log(
+              chalk.yellow(
+                `${element.name} + doesn't appear in any movie + \n`
+              )
+            );
+          }
+        }); */
+        console.log('No more data in response.');
+        spinner.succeed('Todo bien');
+      });
+    });
+
+    req.on('error', (e) => {
+      spinner.fail(`problem with request: ${e.message}`);
+    });
+    req.end();
   });
 
 program
