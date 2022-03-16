@@ -5,6 +5,8 @@ const { API_KEY } = require('../config/config');
 const ora = require('ora');
 const http = require('http');
 const program = new Command();
+const chalk = require('chalk');
+const util = require('util');
 program.version('0.0.1');
 
 program
@@ -30,17 +32,31 @@ program
       path: `/3/person/popular?page=${answer.page}&api_key=17412c1653448ce298346a11dd12d464`,
       method: 'GET',
     };
-    console.log(options);
 
     const req = http.request(options, (res) => {
+      const spinner = ora(
+        'Fetching the popular persons data...'
+      ).start();
+      let responseBody = '';
       console.log(`STATUS: ${res.statusCode}`);
-      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
       res.setEncoding('utf8');
       res.on('data', (chunk) => {
-        console.log(`BODY: ${chunk}`);
+        responseBody = responseBody + chunk.toString();
       });
       res.on('end', () => {
+        const data = JSON.parse(responseBody);
+
+        console.log(
+          chalk.white(
+            '------------------------------------------- \n'
+          ) + chalk.white(`Page: ${answer.page} of: 500`)
+        );
+
+        data.results.forEach((element) => {
+          console.log(element.name);
+        });
         console.log('No more data in response.');
+        spinner.succeed('Todo bien');
       });
     });
 
