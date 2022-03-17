@@ -1,7 +1,7 @@
 const { Command } = require('commander');
 const { prompt } = require('inquirer');
 const { axios } = require('axios');
-const { API_KEY } = require('../config/config');
+const  { API_KEY} = require('../config/config');
 const ora = require('ora');
 const http = require('http');
 const program = new Command();
@@ -29,10 +29,10 @@ program
 
     const options = {
       hostname: 'api.themoviedb.org',
-      path: `/3/person/popular?page=${answer.page}&api_key=17412c1653448ce298346a11dd12d464`,
+      path: `/3/person/popular?page=${answer.page}&api_key=${API_KEY}`,
       method: 'GET',
     };
-
+    console.log(options)
     const req = http.request(options, (res) => {
       const spinner = ora(
         'Fetching the popular persons data...'
@@ -111,7 +111,7 @@ program
 
     const options = {
       hostname: 'api.themoviedb.org',
-      path: `/3/person/${answer.id}?api_key=17412c1653448ce298346a11dd12d464`,
+      path: `/3/person/${answer.id}?api_key=${API_KEY}`,
       method: 'GET',
     };
 
